@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sin Barreras 2026 - Formulario de inscripción</title>
+    <!-- SheetJS para exportar a Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2b3d 0%, #1b4f6e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #e63946;
+            padding: 32px 28px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            letter-spacing: -1px;
+            font-weight: 800;
+        }
+
+        .header p {
+            margin-top: 12px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        form {
+            padding: 32px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #1e2a3e;
+            font-size: 0.9rem;
+        }
+
+        .required:after {
+            content: " *";
+            color: #e63946;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background-color: white;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230,57,70,0.2);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-group label, .checkbox-group label {
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            width: auto;
+            accent-color: #e63946;
+        }
+
+        .small-input {
+            margin-top: 12px;
+        }
+
+        button {
+            background: #e63946;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 40px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #c1121f;
+            transform: scale(0.98);
+        }
+
+        .tabla-registros {
+            margin-top: 30px;
+            background: #f8fafc;
+            border-radius: 24px;
+            overflow-x: auto;
+            padding: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        th {
+            background: #1e2a3e;
+            color: white;
+            padding: 10px 6px;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            border-bottom: 1px solid #cbd5e1;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .badge {
+            background: #e63946;
+            color: white;
+            border-radius: 30px;
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            margin-left: 12px;
+        }
+
+        h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .footer {
+            background: #f1f5f9;
+            padding: 16px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #475569;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>SIN BARRERAS 2026</h1>
+        <p>Al llenar este formulario, nos pondremos en contacto contigo para resolver todas tus dudas y ayudarte en todo el proceso.</p>
+    </div>
+
+    <form id="formulario">
+        <!-- NOMBRES -->
+        <div class="form-group">
+            <label class="required">Nombres</label>
+            <input type="text" id="nombres" required placeholder="Ej: María José">
+        </div>
+
+        <!-- APELLIDOS -->
+        <div class="form-group">
+            <label class="required">Apellidos</label>
+            <input type="text" id="apellidos" required placeholder="Ej: López Fernández">
+        </div>
+
+        <!-- EDAD con validación 18-30 -->
+        <div class="form-group">
+            <label class="required">Edad</label>
+            <input type="number" id="edad" required placeholder="18 a 30 años" min="1" max="120">
+            <div id="edad-warning" class="warning" style="display:none; margin-top:8px;"></div>
+        </div>
+
+        <!-- CORREO -->
+        <div class="form-group">
+            <label class="required">Correo</label>
+            <input type="email" id="correo" required placeholder="tuemail@ejemplo.com">
+        </div>
+
+        <!-- CELULAR -->
+        <div class="form-group">
+            <label class="required">Celular</label>
+            <input type="tel" id="celular" required placeholder="+591 7XXXXXXX">
+            <small>Ej: 79123456 o +59179123456</small>
+        </div>
+
+        <!-- CIUDAD (lista de Bolivia + Otra) -->
+        <div class="form-group">
+            <label class="required">¿En qué ciudad resides?</label>
+            <select id="ciudad" required>
+                <option value="">-- Selecciona --</option>
+                <option value="La Paz">La Paz</option>
+                <option value="Cochabamba">Cochabamba</option>
+                <option value="Santa Cruz">Santa Cruz</option>
+                <option value="Sucre">Sucre</option>
+                <option value="Tarija">Tarija</option>
+                <option value="Potosí">Potosí</option>
+                <option value="Oruro">Oruro</option>
+                <option value="Pando">Pando</option>
+                <option value="Beni">Beni</option>
+                <option value="Villamontes">Villamontes</option>
+                <option value="Yacuiba">Yacuiba</option>
+                <option value="Otra">Otra</option>
+            </select>
+            <input type="text" id="ciudad_otra" placeholder="Especifica tu ciudad" style="margin-top:10px; display:none;">
+        </div>
+
+        <!-- UNIVERSIDAD / INSTITUTO (con todas las opciones de las imágenes) -->
+        <div class="form-group">
+            <label class="required">¿En qué universidad / Instituto estudias o estudiaste?</label>
+            <select id="universidad" required>
+                <option value="">-- Selecciona --</option>
+                <optgroup label="Cochabamba">
+                    <option>Alianza Francesa - Cochabamba</option>
+                    <option>Millennium Training Center (MTC) - Cochabamba</option>
+                    <option>Universidad Privada Franz Tamayo (UNIFRANZ) - Cochabamba</option>
+                    <option>Universidad Adventista de Bolivia (UAB) - Cochabamba</option>
+                    <option>Universidad Mayor de San Simón (UMSS) - Cochabamba</option>
+                    <option>Universidad Privada Boliviana (UPB) - Cochabamba</option>
+                    <option>Universidad Privada Abierta Latinoamericana (UPAL) - Cochabamba</option>
+                    <option>Universidad Salesiana de Bolivia (USB) - Cochabamba</option>
+                    <option>Escuela Militar de Ingeniería (EMI) - Cochabamba</option>
+                    <option>Universidad Técnica Privada Cosmos (UNITEPC) - Cochabamba</option>
+                    <option>Universidad Simón I. Patiño (USIP) - Cochabamba</option>
+                    <option>Universidad de Ciencias Administrativas y Tecnológicas (UCATEC) - Cochabamba</option>
+                    <option>Centro Boliviano Americano (CBA) - Cochabamba</option>
+                    <option>Instituto Cultural Boliviano Aleman (ICBA) - Cochabamba</option>
+                    <option>Universidad Central (UNICEN) - Cochabamba</option>
+                    <option>Universidad NUR - Cochabamba</option>
+                    <option>Universidad Privada del Valle (UNIVALLE) - Cochabamba</option>
+                    <option>Universidad de Aquino Bolivia (UDABOL) - Cochabamba</option>
+                    <option>Universidad Latinoamericana (ULA) - Cochabamba</option>
+                    <option>Universidad Privada Domingo Savio (UPDS) - Cochabamba</option>
+                    <option>Universidad Católica Boliviana San Pablo (UCB) - Cochabamba</option>
+                    <option>Otras universidades e institutos - Cochabamba</option>
+                    <option>No estudio - Cochabamba</option>
+                </optgroup>
+                <optgroup label="La Paz">
+                    <option>Universidad de Aquino Bolivia (UDABOL) - La Paz</option>
+                    <option>Universidad Privada Franz Tamayo (UNIFRANZ) - La Paz</option>
+                    <option>Instituto Tecnológico "INFOCAL" - La Paz</option>
+                    <option>Universidad Mayor de San Andrés (UMSA) - La Paz</option>
+                    <option>Universidad Real (UREAL) - La Paz</option>
+                    <option>Universidad Boliviana de Informática (UBI) - La Paz</option>
+                    <option>Universidad NUR - La Paz</option>
+                    <option>Universidad de la Cordillera (UCORDILLERA) - La Paz</option>
+                    <option>Centro Boliviano Americano (CBA) - La Paz</option>
+                    <option>Universidad Privada San Francisco de Asís (USFA) - La Paz</option>
+                    <option>Universidad Privada Boliviana (UPB) - La Paz</option>
+                    <option>Universidad Privada del Valle (UNIVALLE) - La Paz</option>
+                    <option>Universidad Privada Domingo Savio (UPDS) - La Paz</option>
+                    <option>Universidad Salesiana de Bolivia (USALESIANA) - La Paz</option>
+                    <option>Escuela Militar de Ingeniería (EMI) - La Paz</option>
+                    <option>Universidad Católica Boliviana San Pablo (UCB) - La Paz</option>
+                    <option>Universidad Central (UNICEN) - La Paz</option>
+                    <option>Otra universidad/instituto - La Paz</option>
+                </optgroup>
+                <optgroup label="Otras regiones">
+                    <option>Otra universidad (no listada)</option>
+                    <option>No estudio actualmente</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- CARRERA -->
+        <div class="form-group">
+            <label class="required">¿Qué carrera estudias o estudiaste?</label>
+            <select id="carrera" required>
+                <option value="">-- Selecciona --</option>
+                <option>Administración de Empresas</option>
+                <option>Ciencias de la Educación</option>
+                <option>Comercio Internacional</option>
+                <option>Comunicación Social</option>
+                <option>Diseño Gráfico</option>
+                <option>Turismo y Hotelera</option>
+                <option>Idiomas</option>
+                <option>Ingeniería Comercial</option>
+                <option>Ingeniería Financiera</option>
+                <option>Ingeniería Industrial</option>
+                <option>Ingeniería de Sistemas y Computación</option>
+                <option>Ingeniería Informática</option>
+                <option>Marketing</option>
+                <option>Negocios Internacionales</option>
+                <option>Publicidad</option>
+                <option>Contaduría Pública</option>
+                <option>Ingeniería de Sistemas</option>
+                <option>Otra</option>
+            </select>
+            <input type="text" id="carrera_otra" placeholder="Escribe tu carrera" style="margin-top:10px; display:none;">
+        </div>
+
+        <!-- MEDIO DE CONTACTO -->
+        <div class="form-group">
+            <label class="required">¿Por qué medio deseas ser contactado?</label>
+            <select id="medio_contacto" required>
+                <option value="">-- Elige --</option>
+                <option>Chat de WhatsApp</option>
+                <option>Llamada de WhatsApp</option>
+                <option>Correo</option>
+            </select>
+        </div>
+
+        <!-- ACEPTAR CONTACTO -->
+        <div class="form-group">
+            <label class="required">Acepto que me puedan contactar a través de mi email y mi número de teléfono</label>
+            <select id="acepta_contacto" required>
+                <option value="">-- Selecciona --</option>
+                <option value="Sí">Sí, acepto</option>
+                <option value="No">No, no acepto</option>
+            </select>
+        </div>
+
+        <!-- CÓMO SE ENTERÓ -->
+        <div class="form-group">
+            <label class="required">¿Cómo te enteraste de la Iniciativa "Sin Barreras"?</label>
+            <select id="como_se_entero" required>
+                <option value="">-- Selecciona --</option>
+                <option>Facebook</option>
+                <option>Instagram</option>
+                <option>Evento Presencial (Charla, activación, feria, etc)</option>
+                <option>LinkedIn</option>
+                <option>Comunidad de WhatsApp</option>
+                <option>TikTok</option>
+                <option>Youtube</option>
+                <option>Whatsapp (Estados, Grupos)</option>
+                <option>Página Web</option>
+                <option>Email</option>
+                <option>Evento/Webinars</option>
+                <option>Email enviado por mi Universidad/Instituto</option>
+                <option>Bolsa de Trabajo</option>
+                <option>Amigos o Familiares</option>
+                <option>Por un miembro de AIESEC</option>
+                <option>Soy miembro de AIESEC</option>
+                <option>Otro medio</option>
+                <option>Sesión Informativa</option>
+                <option>Otros</option>
+            </select>
+        </div>
+
+        <button type="button" id="btnEnviar">📥 Enviar y guardar en Excel</button>
+    </form>
+
+    <div class="tabla-registros">
+        <h3>📋 Registros guardados <span id="contador" class="badge">0</span></h3>
+        <div style="overflow-x: auto;">
+            <table id="tablaDatos">
+                <thead>
+                    <tr><th>#</th><th>Nombres</th><th>Apellidos</th><th>Edad</th><th>Correo</th><th>Celular</th><th>Ciudad</th><th>Universidad/Inst</th><th>Carrera</th><th>Medio contacto</th><th>Acepta</th><th>Cómo se enteró</th></tr>
+                </thead>
+                <tbody id="tablaBody">
+                    <tr><td colspan="12">No hay registros aún. Completa y envía.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button id="btnExportarExcel" style="background:#2c7da0; margin-top:20px;">📎 Exportar todos a Excel</button>
+        <button id="btnLimpiarTodo" style="background:#475569; margin-top:10px;">🗑️ Borrar todos los datos</button>
+    </div>
+    <div class="footer">
+        Powered by Formulario Seguro | Datos almacenados localmente
+    </div>
+</div>
+
+<script>
+    // ------------------- CONFIGURACIÓN -------------------
+    const STORAGE_KEY = "sinBarrerasRegistros";
+
+    // Mostrar campo "Otra" para ciudad
+    const ciudadSelect = document.getElementById('ciudad');
+    const ciudadOtra = document.getElementById('ciudad_otra');
+    ciudadSelect.addEventListener('change', function() {
+        if (this.value === 'Otra') {
+            ciudadOtra.style.display = 'block';
+            ciudadOtra.required = true;
+        } else {
+            ciudadOtra.style.display = 'none';
+            ciudadOtra.required = false;
+            ciudadOtra.value = '';
+        }
+    });
+
+    // Mostrar campo "Otra" para carrera
+    const carreraSelect = document.getElementById('carrera');
+    const carreraOtra = document.getElementById('carrera_otra');
+    carreraSelect.addEventListener('change', function() {
+        if (this.value === 'Otra') {
+            carreraOtra.style.display = 'block';
+            carreraOtra.required = true;
+        } else {
+            carreraOtra.style.display = 'none';
+            carreraOtra.required = false;
+            carreraOtra.value = '';
+        }
+    });
+
+    // Validación de edad (18 a 30 años) con mensaje de menor de edad
+    const edadInput = document.getElementById('edad');
+    const edadWarning = document.getElementById('edad-warning');
+
+    function validarEdad(edadValor) {
+        if (edadValor === "") return false;
+        const edadNum = Number(edadValor);
+        if (isNaN(edadNum)) return false;
+        if (edadNum < 18) {
+            edadWarning.style.display = 'block';
+            edadWarning.innerHTML = '⚠️ Menor de edad. Debes tener entre 18 y 30 años para participar en Sin Barreras 2026.';
+            edadWarning.style.background = '#f8d7da';
+            edadWarning.style.color = '#721c24';
+            return false;
+        } else if (edadNum > 30) {
+            edadWarning.style.display = 'block';
+            edadWarning.innerHTML = '⚠️ La edad máxima para el programa es 30 años.';
+            return false;
+        } else {
+            edadWarning.style.display = 'none';
+            return true;
+        }
+    }
+
+    edadInput.addEventListener('input', () => {
+        validarEdad(edadInput.value);
+    });
+
+    // Cargar registros desde localStorage
+    function cargarRegistros() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+    }
+
+    function guardarRegistros(registros) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+    }
+
+    function actualizarTabla() {
+        const registros = cargarRegistros();
+        const tbody = document.getElementById('tablaBody');
+        const contador = document.getElementById('contador');
+        contador.innerText = registros.length;
+
+        if (registros.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="12">No hay registros aún. Completa y envía.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        registros.forEach((reg, idx) => {
+            html += `<tr>
+                        <td>${idx+1}</td>
+                        <td>${escapeHtml(reg.nombres)}</td>
+                        <td>${escapeHtml(reg.apellidos)}</td>
+                        <td>${reg.edad}</td>
+                        <td>${escapeHtml(reg.correo)}</td>
+                        <td>${escapeHtml(reg.celular)}</td>
+                        <td>${escapeHtml(reg.ciudad)}</td>
+                        <td>${escapeHtml(reg.universidad)}</td>
+                        <td>${escapeHtml(reg.carrera)}</td>
+                        <td>${escapeHtml(reg.medio_contacto)}</td>
+                        <td>${escapeHtml(reg.acepta_contacto)}</td>
+                        <td>${escapeHtml(reg.como_se_entero)}</td>
+                    </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Obtener datos del formulario
+    function obtenerDatos() {
+        const nombres = document.getElementById('nombres').value.trim();
+        const apellidos = document.getElementById('apellidos').value.trim();
+        const edad = document.getElementById('edad').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const celular = document.getElementById('celular').value.trim();
+        let ciudad = document.getElementById('ciudad').value;
+        if (ciudad === 'Otra') ciudad = ciudadOtra.value.trim() || 'Otra (no especificada)';
+        const universidad = document.getElementById('universidad').value;
+        let carrera = document.getElementById('carrera').value;
+        if (carrera === 'Otra') carrera = carreraOtra.value.trim() || 'Otra (no especificada)';
+        const medio_contacto = document.getElementById('medio_contacto').value;
+        const acepta_contacto = document.getElementById('acepta_contacto').value;
+        const como_se_entero = document.getElementById('como_se_entero').value;
+
+        // Validaciones
+        if (!nombres || !apellidos || !edad || !correo || !celular || !ciudad || !universidad || !carrera || !medio_contacto || !acepta_contacto || !como_se_entero) {
+            alert('⚠️ Por favor completa todos los campos obligatorios.');
+            return null;
+        }
+
+        if (!validarEdad(edad)) {
+            alert('❌ Edad no válida. Debes tener entre 18 y 30 años.');
+            return null;
+        }
+
+        if (acepta_contacto !== 'Sí') {
+            alert('Debes aceptar que te contacten por email y teléfono para continuar.');
+            return null;
+        }
+
+        return { nombres, apellidos, edad, correo, celular, ciudad, universidad, carrera, medio_contacto, acepta_contacto, como_se_entero };
+    }
+
+    // Guardar registro
+    function guardarRegistro() {
+        const nuevo = obtenerDatos();
+        if (!nuevo) return false;
+
+        const registros = cargarRegistros();
+        registros.push(nuevo);
+        guardarRegistros(registros);
+        actualizarTabla();
+        limpiarFormulario();
+        alert('✅ Registro guardado exitosamente');
+        return true;
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('nombres').value = '';
+        document.getElementById('apellidos').value = '';
+        document.getElementById('edad').value = '';
+        document.getElementById('correo').value = '';
+        document.getElementById('celular').value = '';
+        document.getElementById('ciudad').value = '';
+        ciudadOtra.style.display = 'none';
+        ciudadOtra.value = '';
+        document.getElementById('universidad').value = '';
+        document.getElementById('carrera').value = '';
+        carreraOtra.style.display = 'none';
+        carreraOtra.value = '';
+        document.getElementById('medio_contacto').value = '';
+        document.getElementById('acepta_contacto').value = '';
+        document.getElementById('como_se_entero').value = '';
+        edadWarning.style.display = 'none';
+    }
+
+    // Exportar a Excel
+    function exportarExcel() {
+        const registros = cargarRegistros();
+        if (registros.length === 0) {
+            alert('No hay datos para exportar');
+            return;
+        }
+        const encabezados = ['Nombres','Apellidos','Edad','Correo','Celular','Ciudad','Universidad/Instituto','Carrera','Medio de contacto','Acepta contacto','Cómo se enteró'];
+        const filas = registros.map(r => [r.nombres, r.apellidos, r.edad, r.correo, r.celular, r.ciudad, r.universidad, r.carrera, r.medio_contacto, r.acepta_contacto, r.como_se_entero]);
+        const hojaData = [encabezados, ...filas];
+        const libro = XLSX.utils.book_new();
+        const hoja = XLSX.utils.aoa_to_sheet(hojaData);
+        XLSX.utils.book_append_sheet(libro, hoja, 'SinBarreras2026');
+        XLSX.writeFile(libro, `SinBarreras_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+    }
+
+    function borrarTodo() {
+        if (confirm('⚠️ Eliminarás TODOS los registros. ¿Estás seguro?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            actualizarTabla();
+            alert('Datos eliminados');
+        }
+    }
+
+    // Eventos
+    document.getElementById('btnEnviar').addEventListener('click', guardarRegistro);
+    document.getElementById('btnExportarExcel').addEventListener('click', exportarExcel);
+    document.getElementById('btnLimpiarTodo').addEventListener('click', borrarTodo);
+
+    actualizarTabla();
+</script>
+</body>
+</html>
